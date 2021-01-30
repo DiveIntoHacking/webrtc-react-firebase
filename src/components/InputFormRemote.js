@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn() {
+export default function SignIn({ remotePeerName, setRemotePeerName }) {
   const label = '相手の名前';
   const classes = useStyles();
 
