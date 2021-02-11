@@ -54,6 +54,37 @@ export default class RtcClient {
     return this.mediaStream.getVideoTracks()[0];
   }
 
+  async offer() {
+    const sessionDescription = await this.createOffer();
+    await this.setLocalDescription(sessionDescription);
+    await this.sendOffer();
+  }
+
+  async createOffer() {
+    try {
+      return await this.rtcPeerConnection.createOffer();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async setLocalDescription(sessionDescription) {
+    try {
+      await this.rtcPeerConnection.setLocalDescription(sessionDescription);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async sendOffer() {
+    this.firebaseSignallingClient.setPeerNames(
+      this.localPeerName,
+      this.remotePeerName
+    );
+
+    await this.firebaseSignallingClient.sendOffer(this.localDescription);
+  }
+
   setOntrack() {
     this.rtcPeerConnection.ontrack = (rtcTrackEvent) => {
       if (rtcTrackEvent.track.kind !== 'video') return;
@@ -66,11 +97,16 @@ export default class RtcClient {
     this.setRtcClient();
   }
 
-  connect(remotePeerName) {
+  async connect(remotePeerName) {
     this.remotePeerName = remotePeerName;
     this.setOnicecandidateCallback();
     this.setOntrack();
+    await this.offer();
     this.setRtcClient();
+  }
+
+  get localDescription() {
+    return this.rtcPeerConnection.localDescription.toJSON();
   }
 
   setOnicecandidateCallback() {
