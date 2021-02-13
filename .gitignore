@@ -25,3 +25,5 @@ yarn-error.log*
 /.bash_history
 
 /.eslintcache
+
+/.firebase-config.js
