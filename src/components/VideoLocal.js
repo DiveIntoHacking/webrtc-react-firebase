@@ -5,8 +5,10 @@ import Video from './Video';
 const VideoLocal = ({ name }) => {
   const videoRef = useRef(null);
   const currentVideoRef = videoRef.current;
+  console.log({ currentVideoRef, name });
 
   useEffect(() => {
+    console.log({ currentVideoRef });
     if (currentVideoRef === null) return;
 
     const getMedia = async () => {
